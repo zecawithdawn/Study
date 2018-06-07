@@ -20,6 +20,7 @@ W = tf.Variable(tf.zeros([784,10]))
 y_true = tf.placeholder(tf.float32, [None,10])
 y_pred = tf.matmul(x, W)
 # 지도학습(supervised learning)에서 쓰이는 모델로 예측 레이블과 정답 레이블을 지정
+# tf.matmul matrix multiply
 
 cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=y_pred, labels=y_true))
 #교차 엔트로피라는 유사성 척도를 사용, 모델의 출력 값이 각 분류에 대응되는 호가률일 때 일반으로 사용
