@@ -1,4 +1,5 @@
-import tensorflow as tf
+# CNN 모델에 대한 설명은
+# https://ujjwalkarn.me/2016/08/11/intuitive-explanation-convnets/ 여기 참고
 
 def weight_variable(shape):
 	initial = tf.truncated_normal(shape, stddev = 0.1)
@@ -47,21 +48,3 @@ def full_layer(input,size):
 # 편향을 적용한 완전 연결 계층
 # 활성화 함수가 없음 -> 처음과 끝의 크기가 같아서
 
-x = tf.placeholder(tf.float32, shape = [None,784])
-y = tf.placeholder(tf.float32, shape = [None,10])
-# x 는784의 크기를 가진 텐서를 받을 것이고, y는 정답값이 10개이다
-
-x_image = tf.reshape(x,[-1,28,28,1])
-conv1 = conv_layer(x_image, shape=[5,5,1,32])
-conv1_pool = max_pool_2x2(conv1)
-
-conv2 = conv_layer(conv1_pool, shape= [5,5,32,64])
-conv2_pool = max_pool_2x2(conv2)
-
-conv2_flat = tf.reshape(conv2_pool, [-1,7*7*64])
-full_1 = tf.nn.relu(full_layer(conv2_flat,1024))
-
-keep_prob = tf.placeholder(tf.float32)
-full1_drop = tf.nn.dropout(full_1,keep_prob=keep_prob)
-
-y_conv = full_layer(full1_drop,10)
