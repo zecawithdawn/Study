@@ -44,10 +44,12 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction,tf.float32))
 # fully connect layer
 with tf.Session() as sess:
 	sess.run(tf.global_variables_initializer())
+	# 글로벌 변수 초기화
 
 	for i in range(STEPS):
+		# 5000번 반복
 		batch = mnist.train.next_batch(MINBATCH_SIZE)
-
+		# 50개씩 미니배치
 		if i % 100 == 0:
 			train_accuracy = sess.run(accuracy, feed_dict={x:batch[0],y_:batch[1],keep_prob:1.0})
 			print("step {}, training accuracy {}".format(i,train_accuracy))
@@ -58,5 +60,8 @@ with tf.Session() as sess:
     Y = mnist.test.labels.reshape(10, 1000, 10)
     test_accuracy = np.mean(
         [sess.run(accuracy, feed_dict={x: X[i], y_: Y[i], keep_prob: 1.0}) for i in range(10)])
+
+    # keep_prob을 먹이는 곳이 3군데 있는데 0.5인곳이 트레이닝 시키는곳인듯하고
+    # keep_prob이 1.0인곳이 testset traing시키는 곳에 관련 된 건데 위에께 러닝 시키고 아래께 둘이 비교하면서 넣어주는곳인가
 
 print("test accuracy: {}".format(test_accuracy))

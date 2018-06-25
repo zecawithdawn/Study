@@ -77,3 +77,39 @@ with tf.name_scope('cross_entropy'):
 with tf.name_scope('train'):
 	train_step = tf.train.RMSPropOptimizer(0.001, 0.9).minimize(cross_entropy)
 
+with tf.name_scope('accuracy'):
+	correct_prediction = tf.equal(tf.argmax(y,1),tf.argmax(output,1))
+	accuracy = (tf.reduce_mean(tf.cast(correct_prediction,tf.float32))) * 100
+	tf.summary.scalar('accuracy',accuracy)
+
+merged = tf.summary.merge_all()
+
+test_data = mnist.test.image[:batch_size].reshape((-1, time_steps,element_size))
+test_label = mnist.test.labels[:batch_size]
+
+with tf.Session() as sess:
+	# LOG_DIR에 텐서보드에서 사용할 요약을 기록
+	train_writer = tf.summary.FileWriter(LOG_DIR + '/train',gragh=tf.get_default_graph())
+	test_writer = tf.summary.FileWriter(LOG_DIR + '/test',gragh = tf.get_default_graph())
+
+	sess.run(tf.global_variables_initializer())
+
+	for i in range(10000):
+		batch_x,batch_y = mnist.train.next_batch(batch_size)
+
+		batch_x = batch_x.reshape((batch_size, time_steps, element_size))
+		summary,_ = sess.run([merged, train_step], feed_dict = {_inputs:batch_x,y:batch_y})
+
+		train_writer.add_summary(summary,i)
+
+		if i % 1000 == 0 :
+			acc,loss = sess.run([accuracy,cross_entropy],feed_dict={_inputs:batch_x,y:batch_y})
+			print("Iter "+ str(i) + ", Minibatch Loss = " + "{:.6f}".format(loss) + ",Traing Accuracy=" + "{:.5f}".format(acc))
+
+		if i % 100 = 0 :
+		summary, acc = sess.run([merged, accuracy], feed_dict={_inputs: test_data,y = test_label})
+		test_writer.add_summary(summary,i)
+
+	test_acc = sess.run(accuracy, feed_dict={_inputs: test_data,y:test_label})
+	print("Test Accuracy:",test_acc)
+
