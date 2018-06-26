@@ -23,7 +23,7 @@ y_pred = tf.matmul(x, W)
 # tf.matmul matrix multiply
 
 cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=y_pred, labels=y_true))
-#교차 엔트로피라는 유사성 척도를 사용, 모델의 출력 값이 각 분류에 대응되는 호가률일 때 일반으로 사용
+# 교차 엔트로피라는 유사성 척도를 사용, 모델의 출력 값이 각 분류에 대응되는 확률일 때 일반으로 사용
 # loss function(손실함수)라고 부르기도 한다
 
 gd_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)
