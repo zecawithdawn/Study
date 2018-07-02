@@ -23,7 +23,7 @@ y = tf.placeholder(tf.float32, shape=[None, num_classes],name='labels')
 # 플레이스 홀더는 세션이 시작될때 feed_dict로 값이 주워진다.
 
 def variable_summaries(var):
-	with.tf.name_scope('summaries'):
+	with tf.name_scope('summaries'):
 		mean = tf.reduce_mean(var)
 		tf.summary.scalar('mean', mean)
 		with tf.name_scope('stddev'):
@@ -37,7 +37,7 @@ def variable_summaries(var):
 # histogram은 TensorBoard에 데이터 분포를 시각화 하기 위해 추가
 
 with tf.name_scope('rnn_weights'):
-	with tf.name("W_x"):
+	with tf.name_scope("W_x"):
 		Wx = tf.Variable(tf.zeros([element_size, hidden_layer_size]))
 		variable_summaries(Wx)
 	with tf.name_scope("W_h"):
@@ -50,7 +50,7 @@ with tf.name_scope('rnn_weights'):
 # 을 초기화 시켜준다  
 
 def rnn_step(previous_hidden_state,x):
-	current_hidden_state = tf.tahn(tf.matmul(previous_hidden_state, Wh) + tf.matmul(x, Wx) + b_rnn)
+	current_hidden_state = tf.tanh(tf.matmul(previous_hidden_state, Wh) + tf.matmul(x, Wx) + b_rnn)
 	return current_hidden_state
 # current = tahn(previous * Wh + x * Wx + Bias)
 # 로 RNN 모델을 정의
@@ -69,7 +69,7 @@ all_hidden_states = tf.scan(rnn_step,processed_input,initializer=initial_hidden,
 
 # 출력에 저용할 가중치
 # RNN은 각 시간 단계에 대한 상태 벡터에 가중치를 곱하여 데이터의 새로운 표현인 출력벡터를 얻는다.
- with tf.name_scope('linear_layer_weights') as scope:
+with tf.name_scope('linear_layer_weights') as scope:
 	with tf.name_scope("W_linear"):
 		Wl = tf.Variable(tf.truncated_normal([hidden_layer_size,num_classes],mean=0,stddev=0.01))
 		variable_summaries(Wl)
@@ -92,7 +92,7 @@ with tf.name_scope('linear_layer_weights') as scope:
 
 # RNN분류
 with tf.name_scope('cross_entropy'):
-	cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entopy_with_logits(logits=output, labels =y))
+	cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=output, labels =y))
 	tf.summary.scalar('cross_entropy', cross_entropy)
 # 손실 함수 교차 엔트로피 방법 사용했음
 with tf.name_scope('train'):
@@ -111,7 +111,7 @@ merged = tf.summary.merge_all()
 ### merged(cross_entropy,train_step,crrect_prediction,accuracy)같은 함수 형태로 봐도 되는건가? 
 
 # 테스트를 위한 데이터 생성
-test_data = mnist.test.image[:batch_size].reshape((-1, time_steps,element_size))
+test_data = mnist.test.images[:batch_size].reshape((-1, time_steps,element_size))
 test_label = mnist.test.labels[:batch_size]
 # reshape는 numpy패키지의 함수로 -1 을 쓸수있는데
 # -1은 다른 요소에서 남은 값을 사용한다
@@ -119,33 +119,33 @@ test_label = mnist.test.labels[:batch_size]
 
 # 위에서 생성한 모델을 실행
 with tf.Session() as sess:
-	train_writer = tf.summary.FileWriter(LOG_DIR + '/train',gragh=tf.get_default_graph())
-	test_writer = tf.summary.FileWriter(LOG_DIR + '/test',gragh = tf.get_default_graph())
+    train_writer = tf.summary.FileWriter(LOG_DIR + '/train',graph=tf.get_default_graph())
+    test_writer = tf.summary.FileWriter(LOG_DIR + '/test',graph = tf.get_default_graph())
 	# LOG_DIR에 텐서보드에서 사용할 요약을 기록
 	
-	sess.run(tf.global_variables_initializer())
+    sess.run(tf.global_variables_initializer())
 	# session을 시작하기 이전에 항상 초기화를 먼저
-	for i in range(10000):
+    for i in range(10000):
 		# 10000번 학습을 실행 할것임
-		batch_x, batch_y = mnist.train.next_batch(batch_size)
+        batch_x, batch_y = mnist.train.next_batch(batch_size)
 		# next_batch는 train 데이터 셋에서 batch_size 만큼의 랜덤 데이터를 가져와서 넣겠다는 뜻
-		batch_x = batch_x.reshape((batch_size, time_steps,element_size))
+        batch_x = batch_x.reshape((batch_size, time_steps,element_size))
 		# 데이터 값은 직렬 형태의 784,0 의 형태이므로
 		# 28개의 시퀀스를 얻기 위해 각 데이터를 28픽셀 형태로 변환
 		# batch를 128 * 28 * 28 형태의 배열로 변경해줌
-		summary,_ = sess.run([merged, train_step], feed_dict = {_inputs:batch_x,y:batch_y})
+        summary,_ = sess.run([merged, train_step], feed_dict = {_inputs:batch_x,y:batch_y})
 		# [merged와 train_step]의 값을 얻기 위해 데이터를 밀어 넣음
 		### 백 프로퍼게이션은 위의 최적화 함수에 포함되있는건가??
-		train_writer.add_summary(summary,i)
-		if i % 1000 == 0 :
-			acc,loss = sess.run([accuracy,cross_entropy],feed_dict={_inputs:batch_x,y:batch_y})
-			print("Iter "+ str(i) + ", Minibatch Loss = " + "{:.6f}".format(loss) + ",Traing Accuracy=" + "{:.5f}".format(acc))
+        train_writer.add_summary(summary,i)
+        if i % 1000 == 0 :
+            acc,loss = sess.run([accuracy,cross_entropy],feed_dict={_inputs:batch_x,y:batch_y})
+            print("Iter "+ str(i) + ", Minibatch Loss = " + "{:.6f}".format(loss) + ",Traing Accuracy=" + "{:.5f}".format(acc))
 
-		if i % 100 = 0 :
-		summary, acc = sess.run([merged, accuracy], feed_dict={_inputs: test_data,y = test_label})
-		test_writer.add_summary(summary,i)
+        if i % 100 == 0 :
+            summary, acc = sess.run([merged, accuracy], feed_dict={_inputs: test_data,y : test_label})
+            test_writer.add_summary(summary,i)
 
-	test_acc = sess.run(accuracy, feed_dict={_inputs: test_data,y:test_label})
-	print("Test Accuracy:",test_acc)
+    test_acc = sess.run(accuracy, feed_dict={_inputs: test_data,y:test_label})
+    print("Test Accuracy:",test_acc)
 ### for 문이 끝나면 학습이 끝나는 것이니 with문 내에서 input을 만들어서
 ### 내가 직접 값을 넣고 컴퓨터가 무슨 글자인지 알려주는 코드를 추가해보자
