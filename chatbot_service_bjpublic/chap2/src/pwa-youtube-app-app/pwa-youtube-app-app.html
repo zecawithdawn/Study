@@ -1,0 +1,50 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="list-page.html">
+<link rel="import" href="video-page.html">
+
+<dom-module id="pwa-youtube-app-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+  
+    <app-location route="{{route}}"></app-location>
+    <!-- {{}}는 양방향 데이터 바인딩 -->
+    <app-route
+            route="{{route}}"
+            pattern="/:page"
+            data="{{routedata}}"
+            tail="{{subroute}}"></app-route>
+
+    <iron-page id="page" role="main" selected="[[routeData.page]]"
+               attr-for-selected="name" fallback-selection="shows">
+    <list-page name="shows" subroute="[[subroute]]"></list-page>
+    <video-page name="viedo" subroute="[[subroute]]"></video-page>
+    </iron-page>            
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class PwaYoutubeAppApp extends Polymer.Element {
+      static get is() { return 'pwa-youtube-app-app'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'pwa-youtube-app-app'
+          }
+        };
+      }
+    }
+
+    window.customElements.define(PwaYoutubeAppApp.is, PwaYoutubeAppApp);
+  </script>
+</dom-module>

@@ -1,0 +1,7 @@
+{
+  "name": "pwa-youtube-app",
+  "short_name": "pwa-youtube-app",
+  "description": "pwa",
+  "start_url": "/",
+  "display": "standalone"
+}
