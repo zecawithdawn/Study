@@ -67,13 +67,9 @@
 			}
 		</style>
 
-		<iron-ajax
-			auto
-			url="[[_getUrl(pageToken)]]"
-			handle-as="json"
-			on-response="_onXhrResponse"></iron-ajax>
+		<iron-ajax auto="" url="[[_getUrl(pageToken)]]" handle-as="json" on-response="_onXhrResponse"></iron-ajax>
 
-		<iron-list id="list" scroll-target="document" items="[[items]]" grid>
+		<iron-list id="list" scroll-target="document" items="[[items]]" grid="">
 			<template>
 				<div class="grid-item">
 					<a href="/video/[[item.id.videoId]]" style$="background-image:url([[item.snippet.thumbnails.high.url]]);">
@@ -83,65 +79,69 @@
 			</template>
 		</iron-list>
 	
-		<iron-scoll-threshlod
-			id="scrollThreshold"
-			scroll-target="document"
-			lower-threshlod="0"
-			on-lower-threshold="_onLowerThreshold">
+		<iron-scoll-threshlod id="scrollThreshold" scroll-target="document" lower-threshlod="0" on-lower-threshold="_onLowerThreshold">
 		</iron-scoll-threshlod>
 
 		<div class="loading-indicator" off$="[[lastPage]]">로딩중입니다...</div>
 
 	</template>
-	<script>
-		class ListPage extends Polymer.Element {
-		static get is() { return 'list-page'; }
-		static get properties() {
-	        return {	        	
-				subroute: Object,
-				items: {
-					type: Array,
-					value: function() {
-						return [];
-					}
-				},
-				nextPageToken: String,
-				pageToken: {
-					type: String,
-					value: ''
-				},
-				lastPage: Boolean,
-			};
-      	}
-      	_getUrl(pageToken) {
-      		return `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=유튜브채널넣기&order=date&maxResults=20&pageToken=${pageToken}&key=여기에 자신의 유트브API 키 넣기`;
-      	}
-      _onXhrResponse(e) {
-	        const response = e.detail.response;
-	        const items = response.items;
-	        if (items.length === 0) {
-	          this.lastPage = true;
-	        } else {	          
-	          this.totalResults = response.pageInfo.totalResults;
-	          if (!response.nextPageToken) {
-	            this.lastPage = true;
-	          } else {
-	            this.nextPageToken = response.nextPageToken;
-	          }	          
-	          items.forEach(function(item) {
-	            this.push('items', item);
-	          }, this);
-	        }
-	        this.$.scrollThreshold.clearTriggers();
-	        //clearTriggers는 아직 함수가 아니라고 에러가 생기는 closed 안된 이슈가 남아있음
-	    }
-	    _onLowerThreshold() {
-        	this.pageToken = this.nextPageToken;
-      	}
-	}
+	<script>class ListPage extends Polymer.Element {
+  static get is() {
+    return 'list-page';
+  }
 
-	window.customElements.define(ListPage.is, ListPage);
+  static get properties() {
+    return {
+      subroute: Object,
+      items: {
+        type: Array,
+        value: function () {
+          return [];
+        }
+      },
+      nextPageToken: String,
+      pageToken: {
+        type: String,
+        value: ''
+      },
+      lastPage: Boolean
+    };
+  }
 
-	</script>
+  _getUrl(pageToken) {
+    return `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCsH44G5T4hHXYrb1aGUB1Gw&order=date&maxResults=20&pageToken=${pageToken}&key=[951198817675-r1ot8de8uf7bk5f8eljdah4ih3trnl1t.apps.googleusercontent.com]`;
+  }
+
+  _onXhrResponse(e) {
+    const response = e.detail.response;
+    const items = response.items;
+
+    if (items.length === 0) {
+      this.lastPage = true;
+    } else {
+      this.totalResults = response.pageInfo.totalResults;
+
+      if (!response.nextPageToken) {
+        this.lastPage = true;
+      } else {
+        this.nextPageToken = response.nextPageToken;
+      }
+
+      items.forEach(function (item) {
+        this.push('items', item);
+      }, this);
+    }
+
+    this.$.scrollThreshold.clearTriggers();
+  }
+
+  _onLowerThreshold() {
+    this.pageToken = this.nextPageToken;
+  }
+
+}
+
+window.customElements.define(ListPage.is, ListPage);</script>
 <dom-module>
 
+</dom-module></dom-module>
