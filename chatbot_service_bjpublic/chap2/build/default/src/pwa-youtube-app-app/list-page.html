@@ -109,7 +109,7 @@
   }
 
   _getUrl(pageToken) {
-    return `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCsH44G5T4hHXYrb1aGUB1Gw&order=date&maxResults=20&pageToken=${pageToken}&key=[951198817675-r1ot8de8uf7bk5f8eljdah4ih3trnl1t.apps.googleusercontent.com]`;
+    return `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=유튜브채널넣기&order=date&maxResults=20&pageToken=${pageToken}&key=여기에 자신의 유트브API 키 넣기`;
   }
 
   _onXhrResponse(e) {
@@ -132,7 +132,7 @@
       }, this);
     }
 
-    this.$.scrollThreshold.clearTriggers();
+    this.$.scrollThreshold.clearTriggers(); //clearTriggers는 아직 함수가 아니라고 에러가 생기는 closed 안된 이슈가 남아있음
   }
 
   _onLowerThreshold() {
